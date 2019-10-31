@@ -35,7 +35,6 @@ const networkParams = {
   modelOptimizer: 'adam',
 }
 const neuralNetwork = ml5.neuralNetwork(networkParams);
-console.log(neuralNetwork)
 
 var recording = false
 var finishedTraining = false
@@ -132,17 +131,12 @@ window.connect = function () {
 }
 
 // log stored Results. For testing purposes
-window.showRecorded = function () {
-  console.log(storedResults)
-}
 
 function createFeatures(resultsArray, classification) {
   recording = false
   for (let i = 0; i < resultsArray[3].length - 1; i += 1) {
     const x = resultsArray.map(electrode => (electrode[i]))
     var y = [classification]
-    console.log(x)
-    console.log(y)
     neuralNetwork.data.addData(x, y)
   }
   storedResults = [
@@ -173,12 +167,9 @@ window.train = function () {
     epochs: 150
   }
 
-  function whileTraining(epoch, loss) {
-    console.log(`epoch: ${epoch}, loss:${loss}`);
-  }
+  function whileTraining(epoch, loss) {}
 
   function doneTraining() {
-    console.log('done!');
     finishedTraining = true
   }
   neuralNetwork.train(trainingOptions, whileTraining, doneTraining)
@@ -232,11 +223,8 @@ async function getProbabilities() {
 
   await classifyFlatten();
   sleep(3000).then(async () => {
-    console.log(unfilteredResults);
     classificationArrayActive = await confidenceFromArray('active');
     classificationArrayRest = await confidenceFromArray('rest');
-    console.log(classificationArrayActive)
-    console.log(classificationArrayRest)
   })
 }
 
@@ -248,11 +236,9 @@ window.predict = async function () {
   sleep(6000).then(() => {
     probAcive = average(classificationArrayActive);
     probRest = average(classificationArrayRest);
-    console.log(probAcive);
-    console.log(probRest);
     sleep(3000).then(() => {
       document.querySelector('#prob0').textContent = probAcive.toFixed(4);
-     document.querySelector('#prob1').textContent = probRest.toFixed(4);
+      document.querySelector('#prob1').textContent = probRest.toFixed(4);
       unfilteredResults = [];
       classificationArrayActive = [];
       classificationArrayRest = [];
@@ -268,8 +254,12 @@ window.predict = async function () {
 
 window.stop = function () {
   recording = false
-  this.console.log(storedResults)
-  this.console.log(unfilteredResults)
-  this.console.log(classificationArrayActive)
-  this.console.log(classificationArrayRest)
+}
+
+window.saveModel = function () {
+  neuralNetwork.save()
+}
+
+window.loadModel = function() {
+  neuralNetwork.load("./model.json")
 }
