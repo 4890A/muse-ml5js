@@ -4,7 +4,7 @@ const Muse = require('muse-js') // this node.js style import needs to be browser
 // This will bundle all of the necessary dependencies
 
 
-const graphTitles = Array.from(document.querySelectorAll('.electrode-item h3'));
+const graphTitles = Array.from(document.querySelectorAll('.electrode-item h4'));
 
 // hook onto and store the cavas div/ canvas context
 const canvases = Array.from(document.querySelectorAll('.electrode-item canvas'));
@@ -45,11 +45,8 @@ window.record = function () {
   recording = true
 }
 
-window.stop = function () {
-  recording = false
-}
 
-storedResults = [
+var storedResults = [
   [],
   [],
   [],
@@ -69,7 +66,11 @@ function plot(reading) {
   }
   const width = canvas.width / 12.0;
   const height = canvas.height / 2.0;
-  context.fillStyle = 'black';
+  var color = "#4f837f"
+  if (recording) {
+    color = "#CDADFF"
+  }
+  context.fillStyle = color;
   context.clearRect(0, 0, canvas.width, canvas.height);
 
   // loop through each eeg reading (15 per array) and create a rectangle cooresponding
@@ -138,7 +139,7 @@ window.showRecorded = function () {
 
 function createFeatures(resultsArray, classification) {
   recording = false
-  for (let i = 0; i < resultsArray[3].length; i += 1) {
+  for (let i = 0; i < resultsArray[3].length - 1; i += 1) {
     const x = resultsArray.map(electrode => (electrode[i]))
     var y = [classification]
     console.log(x)
@@ -169,7 +170,7 @@ window.train = function () {
   // train your model
 
   const trainingOptions = {
-    batchSize: 128,
+    batchSize: 64,
     epochs: 150
   }
 
@@ -179,7 +180,7 @@ window.train = function () {
 
   function doneTraining() {
     console.log('done!');
-    neuralNetwork.save();
+    finishedTraining = true
   }
   neuralNetwork.train(trainingOptions, whileTraining, doneTraining)
 
@@ -191,8 +192,7 @@ function average(arr) {
   arr.forEach((value, index) => {
     sum += value
   })
-  sum = sum / arr.length
-  return sum
+  return sum / arr.length
 }
 
 // a function to sleep
@@ -232,7 +232,7 @@ async function getProbabilities() {
   recording = false
 
   await classifyFlatten();
-  sleep(1000).then(async () => {
+  sleep(3000).then(async () => {
     console.log(unfilteredResults);
     classificationArrayActive = await confidenceFromArray('active');
     classificationArrayRest = await confidenceFromArray('rest');
@@ -246,23 +246,34 @@ window.predict = async function () {
   await getProbabilities();
   // the neuralnNetowrk.classify is asyncronous, need to sleep or await
   // for the classificationArrays to populate
-  sleep(2000).then(() => {
+  sleep(6000).then(() => {
     probAcive = average(classificationArrayActive);
     probRest = average(classificationArrayRest);
     console.log(probAcive);
     console.log(probRest);
-    document.querySelector('#active').textContent = probAcive;
-    document.querySelector('#rest').textContent = probRest;
-    storedResults = [
-      [],
-      [],
-      [],
-      []
-    ];
+    sleep(3000).then(() => {
+      document.querySelector('#prob0').textContent = probAcive.toFixed(4);
+     document.querySelector('#prob1').textContent = probRest.toFixed(4);
+      unfilteredResults = [];
+      classificationArrayActive = [];
+      classificationArrayRest = [];
+      storedResults = [
+        [],
+        [],
+        [],
+        []
+      ];
+    })
   })
 }
 
-
+window.stop = function () {
+  recording = false
+  this.console.log(storedResults)
+  this.console.log(unfilteredResults)
+  this.console.log(classificationArrayActive)
+  this.console.log(classificationArrayRest)
+}
 },{"muse-js":5}],2:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });

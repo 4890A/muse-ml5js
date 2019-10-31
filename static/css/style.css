@@ -1,0 +1,55 @@
+body {
+  padding: 0px;
+  margin: 0px;
+  background:#f5f1e0;
+  /* background: #f1f1f1; */
+}
+
+p {
+	color: white;
+}
+
+
+/* h1 {
+  font-size: 80px;
+  color: blue;
+  text-align: center;
+  font-weight: bold;
+}
+
+h2 {
+  font-size: 50px;
+  text-align: center;
+  color: red
+  font-weight: bold;
+}
+
+
+h3 {
+  font-size: 30px;
+  text-align: center; 
+}*/
+
+#map{
+  width : 1000px;
+  height: 500px;
+}
+
+.title1{
+  color: lightseagreen;
+  font-size: 35px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.title2{
+  color: black;
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.title3{
+  color: lightseagreen;
+  font-size: 25px;
+  font-weight: bold;
+}
